@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Test</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+   </head>
+
+   <body>
+	   <h1> Sample of ecgplot plugin </h1>
+	   <div id="ecgplot" style='width: 585px; height: 414px;'></div>
+	   <!--
+	   <div id="ecg_dashboard" class="btn-toolbar" style="margin-left:140px">
+		   <button id="zoom_in_btn" class="btn btn-primary" >Zoom in</button>
+		   <button id="zoom_out_btn" class="btn btn-primary" >Zoon out</button>
+	   </div>
+	   -->
+	   <div>Min X range: <span id="x_min_range"></span></div>
+	   <div>Min Y range: <span id="y_min_range"></span></div>
+	   <div>Max X range: <span id="x_max_range"></span></div>
+	   <div>Max Y range: <span id="y_max_range"></span></div>
+	   <!-- <div>Current X range: <span id="x_current_range"></span></div> -- >
+	   <!-- <div>Current Y range: <span id="y_current_range"></span></div> -->
+	   <!-- Le javascript
+	   ================================================== -->
+	   <!-- Placed at the end of the document so the pages load faster -->
+	   <!-- library dependency -->
+	   <script type="text/javascript" src="lib/jquery-1.7.2.js"></script>
+	   <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.js"></script>
+	   <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.time.js"></script>
+	   <script language="javascript" type="text/javascript" src="lib/flot/jquery.flot.navigate.js"></script> 
+
+	   <script type="text/javascript" src="../src/jquery-ecgplot.js"></script>
+	   <script type="text/javascript" src="data/ecg_test_data.js"></script>
+	   <script type="text/javascript">
+		   var now = new Date(); 
+		   var setting = {
+			   data : [],
+			   options : {
+				   rectangleRatio : 0.2, // the ratio of width/height of the minimum rectangle 
+				   axes:{
+					   timeformat : "%M:%S",
+				   },
+				   ecgLineWidth: {
+					   bold: 1.5,
+					   normal: 0.3
+				   },
+				   interactive : {
+					   enable: true,
+					   levelRange: {
+						   lower : 5 , 
+						   upper : 10
+					   }
+				   }
+			   }
+		   };
+
+		   /*{{{*/function formECGSingleSeg(start_timestamp, data_obj){
+			   var ecg_test_data_obj_length = data_obj.data.length;
+			   var ecg_data = [];
+			   var counter = 0;
+			   for(var i=0;i < ecg_test_data_obj_length ; i++){
+				   // just show 1/5 dataset instead of showing all record
+				   var j = 0;
+				   // filter out all the resord that marked as status == -1 (indication of package lose)
+				   if(data_obj.data[i].status != -1){
+					   counter++;
+					   var time_index = parseInt(start_timestamp) + 2*(i*5+j);
+					   ecg_data.push([time_index , data_obj.data[i].vol[j] ]);
+				   }
+			   }
+			   return ecg_data;
+		   }//}}}
+
+		   $(document).ready(function(){
+			   setting.data = formECGSingleSeg(now.getTime() + now.getTimezoneOffset(), test_data);
+
+			   var plot = $('#ecgplot').ECGPlot(setting);
+			   //bind operations with elements
+			   /*
+			   $('#zoom_in_btn').click(function(){
+				   plot.zoom();
+				   var axes = plot.getAxes();
+				   var up_xaxes_min = axes.xaxis.min;//.toFixed(2);
+				   var up_xaxes_max = axes.xaxis.max;//.toFixed(2);
+				   var up_yaxes_min = axes.yaxis.min;//.toFixed(2);
+				   var up_yaxes_max = axes.yaxis.max;//.toFixed(2);
+				   var up_x_range = up_xaxes_max - up_xaxes_min;
+				   var up_y_range = up_yaxes_max - up_yaxes_min;
+				   $('#x_current_range').text(up_x_range);
+				   $('#y_current_range').text(up_y_range);
+			   });
+			   $('#zoom_out_btn').click(function(){
+				   plot.zoomOut();
+				   var axes = plot.getAxes();
+				   var up_xaxes_min = axes.xaxis.min;//.toFixed(2);
+				   var up_xaxes_max = axes.xaxis.max;//.toFixed(2);
+				   var up_yaxes_min = axes.yaxis.min;//.toFixed(2);
+				   var up_yaxes_max = axes.yaxis.max;//.toFixed(2);
+				   var up_x_range = up_xaxes_max - up_xaxes_min;
+				   var up_y_range = up_yaxes_max - up_yaxes_min;
+				   $('#x_current_range').text(up_x_range);
+				   $('#y_current_range').text(up_y_range);
+			   });
+			   */
+		   });
+	   </script>
+   </body>
+</html>
